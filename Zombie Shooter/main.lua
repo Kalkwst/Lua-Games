@@ -23,6 +23,7 @@ end
 function love.update(dt)
     handlePlayerMovement(dt)
     handleZombiesMovement(dt)
+    handleCollisions()
 
     if love.keyboard.isDown("space") then
         spawnZombie()
@@ -65,6 +66,14 @@ function handleZombiesMovement(dt)
     end
 end
 
+function handleCollisions()
+    for i, z in ipairs(zombies) do
+        if distanceBetween(z.x, z.y, player.x, player.y) < 10 then
+            zombies[i] = nil
+        end
+    end
+end
+
 function playerMouseAngle()
     return math.atan2(love.mouse.getY() - player.y, love.mouse.getX() - player.x)
 end
@@ -72,7 +81,6 @@ end
 function zombiePlayerAngle(zombie)
     return math.atan2(player.y - zombie.y, player.x - zombie.x)
 end
-
 
 function spawnZombie()
     local zombie = {}
@@ -93,4 +101,8 @@ function isFastZombie()
     else
         return false
     end
+end
+
+function distanceBetween(x1, y1, x2, y2)
+    return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
