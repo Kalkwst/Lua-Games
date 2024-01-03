@@ -11,18 +11,31 @@ function love.load()
     player.speed = 180
     player.orientation = 0
     
+    zombies = {}
+
     offsets = {}
-    offsets.playerXOffset = sprites.player:getWidth() / 2
-    player.playerYOffset = sprites.player:getHeight() / 2
+    offsets.playerX = sprites.player:getWidth() / 2
+    offsets.playerY = sprites.player:getHeight() / 2
+    offsets.zombieX = sprites.zombie:getWidth() / 2
+    offsets.zombieY = sprites.zombie:getHeight() / 2
 end
 
 function love.update(dt)
     handlePlayerMovement(dt)
+    handleZombiesMovement(dt)
+
+    if love.keyboard.isDown("space") then
+        spawnZombie()
+    end
 end
 
 function love.draw()
     love.graphics.draw(sprites.background, 0, 0)
-    love.graphics.draw(sprites.player, player.x, player.y, player.orientation, nil, nil, offsets.playerXOffset, player.playerYOffset)
+    love.graphics.draw(sprites.player, player.x, player.y, player.orientation, nil, nil, offsets.playerX, offsets.playerY)
+
+    for i, z in ipairs(zombies) do
+        love.graphics.draw(sprites.zombie, z.x, z.y, zombiePlayerAngle(z), nil, nil, offsets.zombieX, offsets.zombieY)
+    end
 end
 
 function handlePlayerMovement(dt)
@@ -45,6 +58,39 @@ function handlePlayerMovement(dt)
     player.orientation = playerMouseAngle()
 end
 
+function handleZombiesMovement(dt)
+    for i, z in ipairs(zombies) do
+        z.x = z.x + (math.cos(zombiePlayerAngle(z)) * z.speed * dt)
+        z.y = z.y + (math.sin(zombiePlayerAngle(z)) * z.speed * dt)
+    end
+end
+
 function playerMouseAngle()
     return math.atan2(love.mouse.getY() - player.y, love.mouse.getX() - player.x)
+end
+
+function zombiePlayerAngle(zombie)
+    return math.atan2(player.y - zombie.y, player.x - zombie.x)
+end
+
+
+function spawnZombie()
+    local zombie = {}
+    zombie.x = math.random(0, love.graphics.getWidth())
+    zombie.y = math.random(0, love.graphics.getHeight())
+    zombie.speed = 140
+
+    if isFastZombie() then
+        zombie.speed = 220
+    end
+
+    table.insert(zombies, zombie)
+end
+
+function isFastZombie()
+    if math.random() < 0.12 then
+        return true
+    else
+        return false
+    end
 end
