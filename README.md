@@ -12,6 +12,7 @@ The original idea of these games is based on this [Udemy course](https://www.ude
 The first game in this collection is a **Shooting Gallery** game. In this game, you have a time limit of **10 seconds** to shoot a target as many times as you can.
 
 ![Shooting Gallery Image](./assets/shooting-gallery.PNG)
+![Shooting Gallery Image 2](./assets/shooting-gallery-2.png)
 
 #### How to play
 
@@ -21,8 +22,28 @@ Move your crosshair onto the target and click to shoot. The scoring system is as
 
 Be careful, if you miss the target, a point will be deducted from your score. So, aim carefully and try to score as high as you can within the time limit!
 
-## Installation
+### 2. Zombie Shooter
 
-## Usage
+The second game in this collection is a **Zombie Shooter** game. In this game, you have a time limit of **300 seconds** to try and survive the undead onslaught.
 
-## Disclaimer
+![Zombie Shooter](./assets/zombie-shooter.PNG)
+![Zombie Shooter 2](./assets/zombie-shooter-2.PNG)
+
+Move your character using the <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> or the arrow keys, and **left click** to shoot
+
+Be wary of the beefy zombies though!
+
+## How to play
+
+1. **Install Love2D:**
+    - Download and install Love2D from the [official website](https://love2d.org/)
+    - Follow the installation instructions based on your operating system.
+2. **Download the repository locally**
+3. **Run The Game**:
+    - Drag the project folder onto the Love2D executable or run the following command in the terminal or command prompt:
+    ```bash
+    love /path/to/the/game
+    ```
+    
+
+
