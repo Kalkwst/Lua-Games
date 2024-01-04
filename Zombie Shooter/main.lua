@@ -1,4 +1,6 @@
 function love.load()
+    math.randomseed(os.time())
+
     sprites = {}
     sprites.background = love.graphics.newImage('sprites/background.png')
     sprites.bullet = love.graphics.newImage('sprites/bullet.png')
@@ -15,6 +17,7 @@ function love.load()
     player.orientation = 0
     player.hp = 10
     player.damage = 10
+    player.canTakeDmg = true
 
     zombies = {}
 
@@ -34,11 +37,15 @@ function love.load()
 
     gameState = 1
     maxZombieTime = 2
-    zombieTimer = 2000
+    zombieTimer = 2
 
     machineGunSpawned = false
-    machineGunTimer = 1
+    machineGunTimer = 180
 
+    playerDamageTimer = 0
+
+    score = 0
+    gameTimer = 300
 end
 
 function love.update(dt)
@@ -49,17 +56,37 @@ function love.update(dt)
     despawnBullets()
 
     if gameState == 2 then
+
+        if gameTimer > 0 then
+            gameTimer = gameTimer - dt
+        end
+    
+        if gameTimer < 0 then
+            gameTimer = 0
+            gameState = 1
+        end
+
         zombieTimer = zombieTimer - dt
         machineGunTimer = machineGunTimer - dt
 
         if zombieTimer <= 0 then
             spawnZombie()
             zombieTimer = math.random(0.8, maxZombieTime)
+            maxZombieTime = maxZombieTime * 0.9
         end
 
         if machineGunTimer <= 0 then
             spawnMachineGun()
             machineGunSpawned = true
+        end
+
+        if playerDamageTimer <= 0 and player.canTakeDmg == false then
+            player.canTakeDmg = true
+            playerDamageTimer = 0.2
+        end
+
+        if playerDamageTimer > 0 then
+            playerDamageTimer = playerDamageTimer - dt
         end
     end
 end
@@ -69,6 +96,14 @@ function love.draw()
 
     love.graphics.setFont(gameFont)
     love.graphics.print("HP: " .. player.hp)
+
+    love.graphics.print("Score: ".. score, 225)
+    love.graphics.print("Time: " .. math.ceil(gameTimer), 450)
+
+    if gameState == 1 then
+        love.graphics.printf("Click anywhere to begin!", 0, love.graphics.getHeight() / 2, love.graphics.getWidth(),
+            "center")
+    end
 
     love.graphics
         .draw(player.sprite, player.x, player.y, player.orientation, nil, nil, offsets.playerX, offsets.playerY)
@@ -94,25 +129,29 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(x, y, button)
-    if button == 1 then
+    if button == 1 and gameState == 2 then
         spawnBullet()
+    elseif button == 1 and gameState == 1 then
+        gameState = 2
+        machineGunSpawned = false
+        player.hp = 10
     end
 end
 
 function handlePlayerMovement(dt)
-    if love.keyboard.isDown("d") or love.keyboard.isDown("right") then
+    if (love.keyboard.isDown("d") or love.keyboard.isDown("right")) and player.x < love.graphics.getWidth() then
         player.x = player.x + player.speed * dt
     end
 
-    if love.keyboard.isDown("a") or love.keyboard.isDown("left") then
+    if (love.keyboard.isDown("a") or love.keyboard.isDown("left")) and player.x > 0 then
         player.x = player.x - player.speed * dt
     end
 
-    if love.keyboard.isDown("w") or love.keyboard.isDown("up") then
+    if (love.keyboard.isDown("w") or love.keyboard.isDown("up")) and player.y > 0 then
         player.y = player.y - player.speed * dt
     end
 
-    if love.keyboard.isDown("s") or love.keyboard.isDown("down") then
+    if (love.keyboard.isDown("s") or love.keyboard.isDown("down")) and player.y < love.graphics.getHeight() then
         player.y = player.y + player.speed * dt
     end
 
@@ -136,10 +175,19 @@ end
 function handleCollisions()
     for i, z in ipairs(zombies) do
         if distanceBetween(z.x, z.y, player.x, player.y) < 10 then
-            player.hp = player.hp - 0
+            if player.canTakeDmg == true then
+                player.hp = player.hp - 1
+                playerDamageTimer = 0.4
+                player.canTakeDmg = false
+            end
+            
 
             if player.hp == 0 then
                 gameState = 1
+
+                for i,z in ipairs(zombies) do
+                    zombies[i] = nil
+                end
             end
         end
 
@@ -165,6 +213,7 @@ function handleBulletWound(bullet, zombie)
 
     if zombie.health <= 0 then
         zombie.dead = true
+        score = score + zombie.score
     end
 
     for i = #zombies, 1, -1 do
@@ -206,15 +255,18 @@ function spawnZombie()
     zombie.health = 10
     zombie.dead = false
     zombie.scaleFactor = 1
+    zombie.score = 1
 
     if isFastZombie() then
         zombie.speed = 220
+        zombie.score = 2
     end
 
     if isBeefyZombie() then
         zombie.health = 30
         zombie.scaleFactor = 2
         zombie.speed = 90
+        zombie.score = 3
     end
 
     table.insert(zombies, zombie)
