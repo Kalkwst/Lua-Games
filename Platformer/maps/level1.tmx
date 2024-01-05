@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="12" tilewidth="64" tileheight="64" infinite="0" nextlayerid="3" nextobjectid="9">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="40" height="12" tilewidth="64" tileheight="64" infinite="0" nextlayerid="4" nextobjectid="13">
  <editorsettings>
   <export target="level1.lua" format="lua"/>
  </editorsettings>
@@ -30,5 +30,9 @@
   <object id="6" x="1600" y="512" width="64" height="64"/>
   <object id="7" x="1792" y="384" width="256" height="384"/>
   <object id="8" x="2176" y="256" width="192" height="64"/>
+ </objectgroup>
+ <objectgroup id="3" name="Enemies">
+  <object id="10" x="832" y="256" width="64" height="64"/>
+  <object id="11" x="1856" y="320" width="64" height="64"/>
  </objectgroup>
 </map>
