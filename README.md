@@ -33,6 +33,12 @@ Move your character using the <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> o
 
 Be wary of the beefy zombies though!
 
+### 3. Platformer
+
+The final game in this collection is a simple **Platformer** game. In this game, you just need to reach the flag.
+
+Move your character using the <kbd>W</kbd><kbd>A</kbd><kbd>D</kbd> or the arrow keys.
+
 ## How to play
 
 1. **Install Love2D:**
